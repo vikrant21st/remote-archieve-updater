@@ -21,8 +21,6 @@ jobs:
         with:
           java-version: 15
           architecture: x64
-      - name: List files
-        run: ls ${{ github.workspace }}
       - name: Creating Exe
         run:
           ./gradlew clean build createDistributable
