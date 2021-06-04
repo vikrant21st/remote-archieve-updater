@@ -8,7 +8,7 @@ on:
 
 jobs:
   Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -20,12 +20,7 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 15
+          architecture: x64
       - name: Creating Exe
-        uses: eskatos/gradle-command-action@v1
-        with:
-          gradle-version: 6.8
-#          wrapper-cache-enabled: true
-#          dependencies-cache-enabled: true
-#          configuration-cache-enabled: true
-          arguments: clean createDistributable
+        run: gradlew.bat clean build createDistributable
       - run: echo "🍏 This job's status is ${{ job.status }}."
