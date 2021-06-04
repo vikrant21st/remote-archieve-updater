@@ -5,7 +5,6 @@ import jetbrains.compose.classfileupdator.utils.divideIn
 import jschutils.SshCommandsJsch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import puttyutils.SshCommandsPutty
@@ -38,21 +37,23 @@ suspend fun updateJar(
         updateJarGeneric(
             selectedClassFiles, configuration, outputChannel
         ) { command: String ->
-            outputChannel.sendBlocking(
-                DebugMessage(
-                    """Executing Command:
+            runBlocking {
+                outputChannel.send(
+                    DebugMessage(
+                        """Executing Command:
                         |$command
                         |
                         |Output:""".trimMargin()
+                    )
                 )
-            )
+            }
             if (useJsch)
                 SshCommandsJsch.runCommands(command, config)
             else
                 SshCommandsPutty.runCommands(command, config)
         }
     } catch (exception: Exception) {
-        outputChannel.sendBlocking(
+        outputChannel.send(
             ErrorMessage(
                 """????? error in uploading files ??????
                 |$exception
@@ -154,6 +155,6 @@ private inline fun <T> withTimeLogging(outputChannel: SendChannel<LogMessage>, b
     var time = System.currentTimeMillis()
     val result = block()
     time = (System.currentTimeMillis() - time) / 1000
-    outputChannel.sendBlocking(TimeLogMessage("Time Taken: $time seconds"))
+    runBlocking { outputChannel.send(TimeLogMessage("Time Taken: $time seconds")) }
     return result
 }
