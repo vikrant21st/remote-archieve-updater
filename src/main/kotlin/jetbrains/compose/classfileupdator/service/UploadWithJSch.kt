@@ -1,9 +1,6 @@
 package jetbrains.compose.classfileupdator.service
 
-import jetbrains.compose.classfileupdator.model.AppConfig
-import jetbrains.compose.classfileupdator.model.ClassFile
-import jetbrains.compose.classfileupdator.model.DebugMessage
-import jetbrains.compose.classfileupdator.model.LogMessage
+import jetbrains.compose.classfileupdator.model.*
 import jschutils.Monitor
 import jschutils.withSFTPChannel
 import jschutils.withSshSession
@@ -12,25 +9,25 @@ import kotlinx.coroutines.channels.trySendBlocking
 import java.io.File
 
 fun uploadJSch(
-    files: List<ClassFile>,
+    files: List<AnyFile>,
     configuration: AppConfig,
     outputChannel: SendChannel<LogMessage>
 ): List<Monitor> {
     return configuration.getSshConfig()
         .withSshSession {
             withSFTPChannel {
-                files.map { classFile ->
-                    val monitor = Monitor(classFile.className)
-                    val localFile = File(classFile.path)
+                files.map { file ->
+                    val monitor = Monitor(file.fileName())
+                    val localFile = File(file.path)
                     val remoteFilePath =
-                        configuration.realWorkDirectory + classFile.fullFilePathInArchive
+                        configuration.realWorkDirectory + file.fullFilePathInArchive
 
                     put(localFile.inputStream(), remoteFilePath, monitor)
                     if (!monitor.completed)
                         throw Exception("Upload failed: ${monitor.filename}")
 
                     outputChannel.trySendBlocking(
-                        DebugMessage("Uploaded ${classFile.className} in ${monitor.timeTaken} millis")
+                        DebugMessage("Uploaded ${file.fileName()} in ${monitor.timeTaken} millis")
                     )
                     monitor
                 }

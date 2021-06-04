@@ -14,7 +14,9 @@ sealed class AnyFile(val path: String, baseDirectory: String) {
     override fun toString() = path
 }
 
-class ClassFile(path: String, baseDirectory: String) : AnyFile(path, baseDirectory) {
+class NonClassFile(path: String, baseDirectory: String) : AnyFile(path, baseDirectory)
+
+class ClassFile internal constructor(path: String, baseDirectory: String) : AnyFile(path, baseDirectory) {
     val className = fullFilePathInArchive.removeSuffix(".class").replace('/', '.')
 
     val decoratedClassName by lazy {
@@ -23,3 +25,7 @@ class ClassFile(path: String, baseDirectory: String) : AnyFile(path, baseDirecto
         }
     }
 }
+
+fun anyFile(path: String, baseDirectory: String) =
+    if (path.endsWith(".class")) ClassFile(path, baseDirectory)
+    else NonClassFile(path, baseDirectory)

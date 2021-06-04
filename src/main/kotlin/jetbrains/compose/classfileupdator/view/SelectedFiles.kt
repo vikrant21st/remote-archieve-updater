@@ -11,7 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LastBaseline
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import jetbrains.compose.classfileupdator.model.*
 import jetbrains.compose.classfileupdator.service.updateJar
 import kotlinx.coroutines.GlobalScope
@@ -48,17 +52,19 @@ fun SelectedFiles(appState: CommonState) {
                 VerticalSpace()
 
                 Text(
-                        text = "${appState.selected.filesCount()} class files selected",
-                        modifier = Modifier.alignBy(LastBaseline).weight(1.0f)
+                    text = "${appState.selected.filesCount()} files selected",
+                    modifier = Modifier.alignBy(LastBaseline).weight(1.0f),
+                    style = TextStyle(color = Color.Gray, fontSize = 0.7.em, fontStyle = FontStyle.Italic),
+                    textAlign = TextAlign.End,
                 )
             }
 
             LazyColumn(Modifier.fillMaxHeight().padding(8.dp)) {
                 items(
                     // sort by class name
-                    appState.selected.files().sortedBy { it.decoratedClassName.first }
-                ) { classFile ->
-                    SelectedFile(classFile, removeAction = appState.selected::remove)
+                    appState.selected.files().sortedBy { it.fileName() }
+                ) { anyFile ->
+                    SelectedFile(anyFile, removeAction = appState.selected::remove)
                 }
             }
         }
@@ -88,10 +94,10 @@ private fun startUploadJob(appState: CommonState) {
 }
 
 @Composable
-fun SelectedFile(classFile: ClassFile, removeAction: (ClassFile) -> Unit) {
+fun SelectedFile(classFile: AnyFile, removeAction: (AnyFile) -> Unit) {
     Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
         Column(Modifier.fillMaxWidth(0.8f)) {
-            ClassName(classFile)
+            FileName(classFile)
         }
 
         Column(Modifier.weight(0.1f)) {}

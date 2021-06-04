@@ -11,12 +11,12 @@ import puttyutils.SshCommandsPutty
 import sshcommands.api.SshConfig
 
 fun upload(
-    classFiles: List<ClassFile>,
+    files: List<AnyFile>,
     outputChannel: SendChannel<LogMessage>,
     configuration: AppConfig
 ) =
     runBlocking(Dispatchers.IO) {
-        classFiles.divideIn(configuration.threads)
+        files.divideIn(configuration.threads)
             .forEach { list ->
                 launch {
                     uploadJSch(list, configuration, outputChannel)
@@ -27,7 +27,7 @@ fun upload(
 fun AppConfig.getSshConfig() = SshConfig(hostName, username, password, sshPort)
 
 suspend fun updateJar(
-    selectedClassFiles: List<ClassFile>,
+    selectedFiles: List<AnyFile>,
     configuration: AppConfig,
     outputChannel: SendChannel<LogMessage>,
     useJsch: Boolean = true,
@@ -35,7 +35,7 @@ suspend fun updateJar(
     try {
         val config = configuration.getSshConfig()
         updateJarGeneric(
-            selectedClassFiles, configuration, outputChannel
+            selectedFiles, configuration, outputChannel
         ) { command: String ->
             runBlocking {
                 outputChannel.send(
@@ -67,7 +67,7 @@ suspend fun updateJar(
 }
 
 private suspend fun updateJarGeneric(
-    selectedClassFiles: List<ClassFile>,
+    selectedFiles: List<AnyFile>,
     configuration: AppConfig,
     outputChannel: SendChannel<LogMessage>,
     runCommandImpl: (String) -> List<String>
@@ -76,7 +76,7 @@ private suspend fun updateJarGeneric(
         outputChannel.send(HeaderMessage("Creating temp directory"))
         createAndCleanTempDirectory(
             configuration,
-            selectedClassFiles,
+            selectedFiles,
             runCommandImpl
         ).forEach {
             outputChannel.send(DebugMessage(it))
@@ -85,12 +85,12 @@ private suspend fun updateJarGeneric(
 
     withTimeLogging(outputChannel) {
         outputChannel.send(HeaderMessage("Uploading files"))
-        upload(selectedClassFiles, outputChannel, configuration)
+        upload(selectedFiles, outputChannel, configuration)
     }
 
     withTimeLogging(outputChannel) {
         outputChannel.send(HeaderMessage("Adding Files To Jar"))
-        addFilesToJar(configuration, selectedClassFiles.map { it.fullFilePathInArchive }, runCommandImpl)
+        addFilesToJar(configuration, selectedFiles.map { it.fullFilePathInArchive }, runCommandImpl)
             .forEach {
                 outputChannel.send(InfoMessage(it))
             }
@@ -99,13 +99,13 @@ private suspend fun updateJarGeneric(
 
 private fun createAndCleanTempDirectory(
     configuration: AppConfig,
-    selectedClassFiles: List<ClassFile>,
+    selectedFiles: List<AnyFile>,
     runCommandImpl: (String) -> List<String>
 ): List<String> =
     with(configuration) {
         val rmIfExists = "rm -rf $serverTempDirectory"
         val createTempDir = "mkdir -p $serverTempDirectory"
-        val createPackageFolders = selectedClassFiles
+        val createPackageFolders = selectedFiles
             .map { it.fileLocationInArchive() }
             .distinct()
             .map { "mkdir -p $it" }

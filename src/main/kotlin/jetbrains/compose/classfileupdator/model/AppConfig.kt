@@ -21,6 +21,7 @@ data class AppConfig(
     val username: String,
     val password: String,
     val threads: Int,
+    val classesOnly: Boolean,
 ) {
     @Transient
     var realWorkDirectory = serverTempDirectory
@@ -43,7 +44,8 @@ data class AppConfig(
             hostName = "",
             sshPort = 22,
             serverTempDirectory = "\$HOME/tmpwrk",
-            threads = defaultThreads
+            threads = defaultThreads,
+            classesOnly = true,
         )
 
         fun copyFrom(appConfiguration: AppConfiguration) = with(appConfiguration) {
@@ -56,7 +58,8 @@ data class AppConfig(
                 sshPort = sshPort.value.text.toInt(),
                 hostName = hostName.value.text,
                 serverTempDirectory = workDirectory,
-                threads = threads
+                threads = threads,
+                classesOnly = classesOnlyCheckbox.value,
             )
         }
 
