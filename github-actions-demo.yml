@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - test
+
+  workflow_dispatch:
+
 jobs:
   Explore-GitHub-Actions:
     runs-on: windows-latest
