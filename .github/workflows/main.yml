@@ -23,4 +23,5 @@ jobs:
           architecture: x64
       - name: Creating Exe
         run: gradlew.bat clean build createDistributable
+        working-directory: ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
