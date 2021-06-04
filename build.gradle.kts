@@ -47,6 +47,10 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Exe) // other formats: TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb
             packageName = "Remote Archive Updater"
+
+            windows {
+                iconFile.set(project.file("icon.ico"))
+            }
         }
     }
 }
