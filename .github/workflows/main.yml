@@ -25,7 +25,6 @@ jobs:
         run: ls ${{ github.workspace }}
       - name: Creating Exe
         run:
-          cd ${{ github.workspace }}
-          gradlew.bat clean build createDistributable
+          ./gradlew clean build createDistributable
         working-directory: ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
