@@ -90,7 +90,7 @@ private suspend fun updateJarGeneric(
 
     withTimeLogging(outputChannel) {
         outputChannel.send(HeaderMessage("Adding Files To Jar"))
-        addFilesToJar(configuration, selectedClassFiles.map { it.getFilePathInJar }, runCommandImpl)
+        addFilesToJar(configuration, selectedClassFiles.map { it.fullFilePathInArchive }, runCommandImpl)
             .forEach {
                 outputChannel.send(InfoMessage(it))
             }
@@ -106,7 +106,7 @@ private fun createAndCleanTempDirectory(
         val rmIfExists = "rm -rf $serverTempDirectory"
         val createTempDir = "mkdir -p $serverTempDirectory"
         val createPackageFolders = selectedClassFiles
-            .map { it.getFolderPathInJar() }
+            .map { it.fileLocationInArchive() }
             .distinct()
             .map { "mkdir -p $it" }
         val commands = listOf(

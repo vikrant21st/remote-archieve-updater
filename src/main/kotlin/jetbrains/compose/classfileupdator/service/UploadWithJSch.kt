@@ -8,7 +8,7 @@ import jschutils.Monitor
 import jschutils.withSFTPChannel
 import jschutils.withSshSession
 import kotlinx.coroutines.channels.SendChannel
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import java.io.File
 
 fun uploadJSch(
@@ -23,13 +23,13 @@ fun uploadJSch(
                     val monitor = Monitor(classFile.className)
                     val localFile = File(classFile.path)
                     val remoteFilePath =
-                        configuration.realWorkDirectory + classFile.getFilePathInJar
+                        configuration.realWorkDirectory + classFile.fullFilePathInArchive
 
                     put(localFile.inputStream(), remoteFilePath, monitor)
                     if (!monitor.completed)
                         throw Exception("Upload failed: ${monitor.filename}")
 
-                    outputChannel.sendBlocking(
+                    outputChannel.trySendBlocking(
                         DebugMessage("Uploaded ${classFile.className} in ${monitor.timeTaken} millis")
                     )
                     monitor
