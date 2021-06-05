@@ -27,7 +27,7 @@ fun MainWindow() {
                 val boxHeight = with(LocalDensity.current) { constraints.maxHeight.toDp() }
 
                 Column(Modifier.align(Alignment.CenterStart).size(boxWidth, boxHeight)) {
-                    ClassFileFinder(
+                    FileFinder(
                         allFiles = { appState.all.files() },
                         selectedFiles = { appState.selected.files() },
                         actionToSelectFile = appState::selectFile

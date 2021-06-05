@@ -13,13 +13,12 @@ import java.awt.dnd.DnDConstants
 import java.awt.dnd.DropTarget
 import java.awt.dnd.DropTargetDropEvent
 import java.io.File
-import java.time.Duration
 
-const val DEFAULT_WIDTH = 1200
+const val DEFAULT_WIDTH = 1300
 const val DEFAULT_HEIGHT = 800
 
 fun main() = Window(
-        title = "Class Files Update",
+        title = "Remote Archive Updater",
         size = IntSize(DEFAULT_WIDTH, DEFAULT_HEIGHT),
 ) {
     val appState = CommonState.getAppState()
@@ -51,6 +50,3 @@ fun main() = Window(
             }
         }
 }
-
-val Int.seconds: Duration
-    get() = Duration.ofSeconds(this.toLong())

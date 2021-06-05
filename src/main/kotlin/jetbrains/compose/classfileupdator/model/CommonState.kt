@@ -3,31 +3,31 @@ package jetbrains.compose.classfileupdator.model
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
-class ClassFilesList private constructor(
-    private val files: SnapshotStateList<ClassFile>,
+class FilesList private constructor(
+    private val files: SnapshotStateList<AnyFile>,
     private val filesCount: MutableState<Int>
 ) {
     fun filesCount() = filesCount.value
     fun files() = files.toList()
 
-    fun set(list: List<ClassFile>) {
+    fun set(list: List<AnyFile>) {
         files.clear()
         files.addAll(list)
         synchronizeCount()
     }
 
-    fun add(classFile: ClassFile) {
-        files.add(classFile)
+    fun add(file: AnyFile) {
+        files.add(file)
         synchronizeCount()
     }
 
-    fun addAll(classFile: List<ClassFile>) {
-        files.addAll(classFile)
+    fun addAll(files: List<AnyFile>) {
+        this.files.addAll(files)
         synchronizeCount()
     }
 
-    fun remove(classFile: ClassFile) {
-        files.remove(classFile)
+    fun remove(file: AnyFile) {
+        files.remove(file)
         synchronizeCount()
     }
 
@@ -42,7 +42,7 @@ class ClassFilesList private constructor(
 
     internal companion object {
         @Composable
-        fun createList() = ClassFilesList(
+        fun createList() = FilesList(
             files = remember { mutableStateListOf() },
             filesCount = remember { mutableStateOf(0) }
         )
@@ -52,17 +52,22 @@ class ClassFilesList private constructor(
 class CommonState private constructor(
     val configuration: AppConfiguration,
     val outputWindowState: OutputWindowState,
-    val all: ClassFilesList,
-    val selected: ClassFilesList,
+    val all: FilesList,
+    val selected: FilesList,
 ) {
 
-    fun selectFile(classFile: ClassFile) {
-        if (selected.files().contains(classFile)) {
+    fun selectFile(file: AnyFile) {
+        if (selected.files().contains(file)) {
             return
         }
-        selected.add(classFile)
-        selected.addAll(
-            all.files().filter { it.className.startsWith(classFile.className + "$") })
+        selected.add(file)
+
+        if (file is ClassFile)
+            selected.addAll(
+                all.files().filter {
+                    it is ClassFile && it.className.startsWith(file.className + "$")
+                }
+            )
     }
 
     companion object {
@@ -74,8 +79,8 @@ class CommonState private constructor(
                 commonAppState = CommonState(
                     AppConfiguration.configuration(),
                     outputWindowState = OutputWindowState.getState(),
-                    all = ClassFilesList.createList(),
-                    selected = ClassFilesList.createList(),
+                    all = FilesList.createList(),
+                    selected = FilesList.createList(),
                 )
             }
             return commonAppState!!
