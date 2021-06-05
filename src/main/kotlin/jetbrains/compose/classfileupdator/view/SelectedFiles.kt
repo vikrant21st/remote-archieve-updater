@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LastBaseline
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import jetbrains.compose.classfileupdator.model.*
@@ -55,7 +54,6 @@ fun SelectedFiles(appState: CommonState) {
                     text = "${appState.selected.filesCount()} files selected",
                     modifier = Modifier.alignBy(LastBaseline).weight(1.0f),
                     style = TextStyle(color = Color.Gray, fontSize = 0.7.em, fontStyle = FontStyle.Italic),
-                    textAlign = TextAlign.End,
                 )
             }
 

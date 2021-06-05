@@ -34,7 +34,7 @@ private fun RowScope.BaseDirectory(appState: CommonState) {
         value = appState.configuration.baseDirectory.value,
         label = {
             Text(
-                "Local directory aligned with archive's folder-structure (" +
+                "Local directory, aligned with archive's folder-structure (" +
                         "For ex. proj/target/classes/** folder is aligned with packages in it's Jar)"
             )
         },
