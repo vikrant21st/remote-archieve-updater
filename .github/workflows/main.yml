@@ -21,12 +21,12 @@ jobs:
         with:
           java-version: 15
           architecture: x64
-      - name: JUnit Tests
+      - name: Running JUnit Tests and Creating Exe
         run:
-          ./gradlew test
+          ./gradlew test createDistributable --scan
         working-directory: ${{ github.workspace }}
-      - name: Creating Exe
-        run:
-          ./gradlew createDistributable
-        working-directory: ${{ github.workspace }}
+#      - name: Creating Exe
+#        run:
+#          ./gradlew createDistributable --scan
+#        working-directory: ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."

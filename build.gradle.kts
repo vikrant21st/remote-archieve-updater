@@ -17,7 +17,7 @@ repositories {
 //    mavenLocal()
 //    jcenter()
     mavenCentral()
-//    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
 }
 
 dependencies {
@@ -41,6 +41,7 @@ tasks.withType<KotlinCompile>().configureEach {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    ignoreFailures = true
 }
 
 compose.desktop {
@@ -55,4 +56,9 @@ compose.desktop {
             }
         }
     }
+}
+
+extensions.findByName("buildScan")?.withGroovyBuilder {
+    setProperty("termsOfServiceUrl", "https://gradle.com/terms-of-service")
+    setProperty("termsOfServiceAgree", "yes")
 }
