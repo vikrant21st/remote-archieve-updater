@@ -14,8 +14,8 @@ group = "me.vikrangh"
 version = "1.0.0"
 
 repositories {
-    mavenLocal()
-    jcenter()
+//    mavenLocal()
+//    jcenter()
     mavenCentral()
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
 }
@@ -28,7 +28,9 @@ dependencies {
     implementation(project(":ssh-command-putty"))
     implementation(project(":ssh-command-jsch"))
 
-    implementation("org.junit.jupiter:junit-jupiter:5.7.0")
+//    implementation("org.junit.jupiter:junit-jupiter:5.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.7.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -39,6 +41,7 @@ tasks.withType<KotlinCompile>().configureEach {
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
+    ignoreFailures = true
 }
 
 compose.desktop {
@@ -53,4 +56,9 @@ compose.desktop {
             }
         }
     }
+}
+
+extensions.findByName("buildScan")?.withGroovyBuilder {
+    setProperty("termsOfServiceUrl", "https://gradle.com/terms-of-service")
+    setProperty("termsOfServiceAgree", "yes")
 }

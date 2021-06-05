@@ -16,6 +16,7 @@ class AppConfiguration private constructor(
     var hostName: MutableState<TextFieldValue>,
     val workDirectory: String,
     val threads: Int,
+    val classesOnlyCheckbox: MutableState<Boolean>,
 ) {
 
     fun setBaseDirectory(baseDir: String) {
@@ -44,6 +45,7 @@ class AppConfiguration private constructor(
                             sshPort = remember { mutableStateOf(TextFieldValue(sshPort.toString())) },
                             workDirectory = serverTempDirectory,
                             threads = threads,
+                            classesOnlyCheckbox = remember { mutableStateOf(classesOnly) }
                         )
                     }
             }
