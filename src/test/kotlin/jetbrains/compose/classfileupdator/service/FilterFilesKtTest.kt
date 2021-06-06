@@ -19,20 +19,28 @@ internal class FilterFilesKtTest {
     @MethodSource("innerClassTestsInput")
     fun `is an inner class`(input: Pair<String, Boolean>) {
         val (className, expectedResult) = input
-        assertEquals(!notAnInnerClass(anyFile(className, baseDirectory = "")), expectedResult)
+        assertEquals(
+            !(anyFile(className, baseDirectory = "").notAnInnerClass),
+            expectedResult
+        )
     }
 
     companion object {
         @Suppress("unused")
         @JvmStatic
         fun camelCaseTestsInput(): Stream<Pair<String, Boolean>> = Stream.of(
-            "MyName" to true, "IAmMan" to true, "doThat" to true, "gama" to false
+            "MyName" to true,
+            "IAmMan" to true,
+            "doThat" to true,
+            "gama" to false
         )
 
         @Suppress("unused")
         @JvmStatic
         fun innerClassTestsInput(): Stream<Pair<String, Boolean>> = Stream.of(
-            "UtilClass\$Inner.class" to true, "UtilClass.class" to false, "Util\$3.class" to true,
+            "UtilClass\$Inner.class" to true,
+            "UtilClass.class" to false,
+            "Util\$3.class" to true,
         )
     }
 }

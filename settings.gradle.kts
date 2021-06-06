@@ -7,4 +7,6 @@ pluginManagement {
     
 }
 rootProject.name = "remote-archive-updater"
-include("ssh-command-putty", "ssh-command-jsch", "ssh-commands-api")
+include("ssh-commands-api")
+include("ssh-command-jsch")
+include("shell-commands")

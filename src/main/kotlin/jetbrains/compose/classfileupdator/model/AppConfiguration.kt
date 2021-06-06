@@ -7,20 +7,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.text.input.TextFieldValue
 
 class AppConfiguration private constructor(
-    val baseDirectory: MutableState<TextFieldValue>,
-    val serverAppDirectory: MutableState<TextFieldValue>,
-    val serverAppName: MutableState<TextFieldValue>,
+    val localDirectory: MutableState<TextFieldValue>,
+    val serverArchiveDirectory: MutableState<TextFieldValue>,
+    val serverArchiveName: MutableState<TextFieldValue>,
     val username: MutableState<TextFieldValue>,
     val password: MutableState<TextFieldValue>,
     val sshPort: MutableState<TextFieldValue>,
     var hostName: MutableState<TextFieldValue>,
-    val workDirectory: String,
-    val threads: Int,
-    val classesOnlyCheckbox: MutableState<Boolean>,
 ) {
 
     fun setBaseDirectory(baseDir: String) {
-        baseDirectory.value = TextFieldValue(baseDir)
+        localDirectory.value = TextFieldValue(baseDir)
     }
 
     companion object {
@@ -34,18 +31,15 @@ class AppConfiguration private constructor(
                 configuration =
                     with(appConfig) {
                         AppConfiguration(
-                            baseDirectory = remember { mutableStateOf(TextFieldValue(localClassesDirectory)) },
-                            serverAppDirectory = remember {
-                                mutableStateOf(TextFieldValue(serverAppDirectory))
+                            localDirectory = remember { mutableStateOf(TextFieldValue(localDirectory)) },
+                            serverArchiveDirectory = remember {
+                                mutableStateOf(TextFieldValue(serverArchiveDirectory))
                             },
-                            serverAppName = remember { mutableStateOf(TextFieldValue(serverAppName)) },
+                            serverArchiveName = remember { mutableStateOf(TextFieldValue(serverArchiveName)) },
                             username = remember { mutableStateOf(TextFieldValue(username)) },
                             password = remember { mutableStateOf(TextFieldValue(password)) },
                             hostName = remember { mutableStateOf(TextFieldValue(hostName)) },
                             sshPort = remember { mutableStateOf(TextFieldValue(sshPort.toString())) },
-                            workDirectory = serverTempDirectory,
-                            threads = threads,
-                            classesOnlyCheckbox = remember { mutableStateOf(classesOnly) }
                         )
                     }
             }

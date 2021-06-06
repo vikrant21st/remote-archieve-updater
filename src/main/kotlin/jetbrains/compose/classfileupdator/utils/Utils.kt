@@ -26,3 +26,21 @@ fun addFileSeparatorSuffix(path: String, separator: Char = File.separatorChar) =
         path
     else
         "$path$separator"
+
+internal fun fileAtPath(vararg paths: String) =
+    File(paths.joinToString(File.separator))
+
+fun countSubstring(string: String, substring: String): Int {
+    var count = 0
+    var tempStr = string
+    while (tempStr.isNotEmpty()) {
+        val ind = tempStr.indexOf(substring)
+        if (ind > -1) {
+            count++
+            tempStr = tempStr.drop(ind + substring.length)
+        } else {
+            break
+        }
+    }
+    return count
+}

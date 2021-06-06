@@ -25,35 +25,40 @@ fun filterFiles(
 
         val isKeywordCamelCase = keyword.isCamelCased()
 
-        allFiles().filter { anyFile ->
-            notAnInnerClass(anyFile) &&
-                    (anyFile.keywordMatched(keyword) || anyFile.hasAnArbitraryMatch(regex, isKeywordCamelCase))
+        allFiles().filter {
+            with(it) {
+                notAnInnerClass &&
+                        (keywordMatched(keyword) ||
+                                hasAnArbitraryMatch(regex, isKeywordCamelCase))
+            }
         }
     }
 
-private fun AnyFile.keywordMatched(keyword: String) = fullFilePathInArchive.contains(keyword, ignoreCase = true)
+private fun AnyFile.keywordMatched(keyword: String) =
+    fullFilePathInArchive.contains(keyword, ignoreCase = true)
 
-private fun AnyFile.hasAnArbitraryMatch(regex: Regex?, keywordIsCamelCase: Boolean) =
+private fun AnyFile.hasAnArbitraryMatch(
+    regex: Regex?,
+    keywordIsCamelCase: Boolean
+) =
     keywordIsCamelCase && (regex?.matches(fileName()) ?: false)
 
-fun getAllFilesIn(baseDirectory: String, classesOnly: Boolean = false): List<AnyFile> {
+internal fun getAllFilesIn(baseDirectory: String): List<AnyFile> {
     val fileList = mutableListOf<AnyFile>()
 
     val basDirName =
         if (baseDirectory.endsWith('\\')) baseDirectory
         else baseDirectory + '\\'
 
-    val shouldAdd: (String) -> Boolean = when (classesOnly) {
-        true -> { filePath -> filePath.endsWith(".class") }
-        false -> { _ -> true }
-    }
-
     Files.walkFileTree(
         Path.of(basDirName),
         object : SimpleFileVisitor<Path>() {
-            override fun visitFile(file: Path?, attrs: BasicFileAttributes?): FileVisitResult {
-                val filePath = file?.toAbsolutePath()?.toString() ?: ""
-                if (shouldAdd(filePath)) {
+            override fun visitFile(
+                file: Path?,
+                attrs: BasicFileAttributes?
+            ): FileVisitResult {
+                if (file != null) {
+                    val filePath = file.toAbsolutePath().toString()
                     fileList.add(anyFile(filePath, basDirName))
                 }
                 return FileVisitResult.CONTINUE
@@ -62,11 +67,13 @@ fun getAllFilesIn(baseDirectory: String, classesOnly: Boolean = false): List<Any
     return fileList.sortedBy { it.fullFilePathInArchive }
 }
 
-fun String.isCamelCased() =
+internal fun String.isCamelCased() =
     when {
         firstOrNull()?.isUpperCase() == true -> drop(1).indexOfFirst { it.isLowerCase() } != -1
         firstOrNull()?.isLowerCase() == true -> drop(1).indexOfFirst { it.isUpperCase() } != -1
         else -> false
     }
 
-fun notAnInnerClass(anyFile: AnyFile) = anyFile !is ClassFile || !anyFile.className.contains('$')
+internal val AnyFile.notAnInnerClass
+    get() = this !is ClassFile || !this.className.contains('$')
+

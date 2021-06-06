@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Explore-GitHub-Actions:
+  Basic-Unit-Tests-and-Creating-EXE:
     runs-on: windows-latest
     steps:
       - run: echo "⊞ This job is now running on a ${{ runner.os }} server hosted by GitHub!"
@@ -25,8 +25,4 @@ jobs:
         run:
           ./gradlew test createDistributable --scan
         working-directory: ${{ github.workspace }}
-#      - name: Creating Exe
-#        run:
-#          ./gradlew createDistributable --scan
-#        working-directory: ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
