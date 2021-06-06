@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
 }
-group = "me.vikrangh"
+group = "vikrant21st.remote-archive-updater"
 version = "1.0.0"
 
 repositories {

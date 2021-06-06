@@ -1,10 +1,7 @@
 package jetbrains.compose.classfileupdator.view
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,17 +18,18 @@ import java.io.File
 
 @Composable
 fun ColumnScope.FileScanner(appState: CommonState) {
-    val modifier = Modifier.fillMaxWidth(0.9f).padding(10.dp).align(Alignment.CenterHorizontally)
+    val modifier = Modifier.fillMaxWidth(0.9f).padding(10.dp)
+        .align(Alignment.CenterHorizontally)
 
     Row(modifier) { ServerAppDirectory(appState.configuration) }
     Row(modifier) { AppNameUserPasswordAndPort(appState.configuration) }
-    Row(modifier) { BaseDirectory(appState) }
+    Row(modifier) { LocalBaseDirectory(appState) }
 }
 
 @Composable
-private fun RowScope.BaseDirectory(appState: CommonState) {
+private fun RowScope.LocalBaseDirectory(appState: CommonState) {
     TextField(
-        value = appState.configuration.baseDirectory.value,
+        value = appState.configuration.localDirectory.value,
         label = {
             Text(
                 "Local directory, aligned with archive's folder-structure (" +
@@ -39,64 +37,47 @@ private fun RowScope.BaseDirectory(appState: CommonState) {
             )
         },
         modifier = Modifier.alignBy(LastBaseline).weight(1.0f),
-        onValueChange = { appState.configuration.baseDirectory.value = it },
+        onValueChange = { appState.configuration.localDirectory.value = it },
     )
+
+    VerticalSpace()
 
     VerticalSpace()
 
     Button(
         onClick = {
             appState.selected.clear()
-            val baseDir = appState.configuration.baseDirectory.value.text
+            val baseDir = appState.configuration.localDirectory.value.text
             appState.all.set(
-                getAllFilesIn(baseDir, appState.configuration.classesOnlyCheckbox.value)
+                getAllFilesIn(baseDir)
             )
         },
         modifier = Modifier.alignByBaseline(),
-        enabled = File(appState.configuration.baseDirectory.value.text).isDirectory
+        enabled = File(appState.configuration.localDirectory.value.text).isDirectory
     ) {
         Text("Load files")
-    }
-
-    VerticalSpace()
-
-    Column(Modifier.alignByBaseline()) {
-        Row {
-            Checkbox(
-                checked = appState.configuration.classesOnlyCheckbox.value,
-                onCheckedChange = {
-                    appState.configuration.classesOnlyCheckbox.value = it
-                    appState.selected.clear()
-                    val baseDir = appState.configuration.baseDirectory.value.text
-                    appState.all.set(getAllFilesIn(baseDir, it))
-                },
-                modifier = Modifier.alignBy(LastBaseline),
-                enabled = File(appState.configuration.baseDirectory.value.text).isDirectory
-            )
-
-            Text(
-                text = "Only classes",
-                modifier = Modifier.alignByBaseline(),
-            )
-        }
     }
 
     VerticalSpace(20.dp)
 
     Text(
         text = "${appState.all.filesCount()} files found",
-        style = TextStyle(color = Color.Gray, fontSize = 0.7.em, fontStyle = FontStyle.Italic),
-        modifier = Modifier.alignByBaseline(),
+        style = TextStyle(
+            color = Color.Gray,
+            fontSize = 0.7.em,
+            fontStyle = FontStyle.Italic
+        ),
+        modifier = Modifier.alignByBaseline().width(80.dp),
     )
 }
 
 @Composable
 private fun RowScope.AppNameUserPasswordAndPort(configuration: AppConfiguration) {
     TextField(
-        value = configuration.serverAppName.value,
+        value = configuration.serverArchiveName.value,
         label = { Text("Archive file") },
         modifier = Modifier.alignBy(LastBaseline).weight(0.4f),
-        onValueChange = { configuration.serverAppName.value = it },
+        onValueChange = { configuration.serverArchiveName.value = it },
     )
 
     VerticalSpace()
@@ -127,9 +108,9 @@ private fun RowScope.AppNameUserPasswordAndPort(configuration: AppConfiguration)
 @Composable
 private fun RowScope.ServerAppDirectory(configuration: AppConfiguration) {
     TextField(
-        value = configuration.serverAppDirectory.value,
+        value = configuration.serverArchiveDirectory.value,
         label = { Text("Archive directory (on server )") },
         modifier = Modifier.alignBy(LastBaseline).weight(1f),
-        onValueChange = { configuration.serverAppDirectory.value = it },
+        onValueChange = { configuration.serverArchiveDirectory.value = it },
     )
 }
