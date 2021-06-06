@@ -23,8 +23,27 @@ internal class UtilsKtTest {
         "c:\\foo,        \\,            c:\\foo\\",
         "c:\\foo\\,      \\,            c:\\foo\\",
     )
-    fun addFileSeparatorSuffix(path: String, separator: Char, expected: String) {
+    fun addFileSeparatorSuffix(
+        path: String,
+        separator: Char,
+        expected: String
+    ) {
         assertEquals(expected, addFileSeparatorSuffix(path, separator))
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "app//wer/fdfe//qww,    //,     2",
+        "oppe/wqq//qa//asa//,   //,     3",
+        "asada///asda///asads,  //,     2",
+    )
+    fun `count substring`(
+        string: String,
+        substring: String,
+        expectedCount: Int
+    ) {
+        val actual = countSubstring(string, substring)
+        assertEquals(expectedCount, actual)
     }
 
     companion object {
@@ -40,12 +59,16 @@ internal class UtilsKtTest {
                 ListDivideInTestParams(
                     input = (100..116).toList(),
                     divideIn = 5,
-                    ranges = arrayOf(0 to 4, 4 to 8, 8 to 11, 11 to 14, 14 to 17)
+                    ranges = arrayOf(
+                        0 to 4, 4 to 8, 8 to 11, 11 to 14, 14 to 17
+                    )
                 ),
                 ListDivideInTestParams(
                     input = (100..118).toList(),
                     divideIn = 5,
-                    ranges = arrayOf(0 to 4, 4 to 8, 8 to 12, 12 to 16, 16 to 19)
+                    ranges = arrayOf(
+                        0 to 4, 4 to 8, 8 to 12, 12 to 16, 16 to 19
+                    )
                 ),
                 ListDivideInTestParams(
                     input = listOf(1, 2, 3),
